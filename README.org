@@ -1,0 +1,108 @@
+
+Loads and queries macOS ~Body.data~ dictionary files (not included).
+
+This is a port of [[https://github.com/fab-jul/parse_dictionaries][parse_dictionaries]] to C++, with extra links for
+phrases, extra formatting, a smaller cached index, and Qt UI on Linux.
+
+Tested on macOS Big Sur and Ubuntu 22.04 LTS, with the /Oxford
+Dictionary of English/ and /New Oxford American Dictionary/.
+
+* Dependencies
+
+- C++11 compiler (clang on macOS, gcc on Linux)
+
+  On the Mac, install the Developer Tools.
+
+- zlib
+- libxml2
+
+  Install with [[https://www.macports.org/][MacPorts]] if it's not already:
+
+  #+begin_src bash
+    sudo port install libxml2
+  #+end_src
+
+  On Ubuntu:
+
+  #+begin_src bash
+    sudo apt-get install libxml2-dev
+  #+end_src
+
+- Qt (optional)
+
+  On Ubuntu 22.04 LTS:
+
+  #+begin_src bash
+    sudo apt-get install qtbase5-dev qtwebengine5-dev
+  #+end_src
+
+* Building
+
+#+begin_src bash
+  make
+#+end_src
+
+To build without the GUI on Linux:
+
+#+begin_src bash
+  make want_gui=0
+#+end_src
+
+* Usage
+
+On Linux, copy the ~.asset~ directory for a dictionary from your Mac
+(~/System/Library/AssetsV2/com_apple_MobileAsset_DictionaryServices_dictionaryOSX/~).
+
+Then either:
+
+- Set the environment variable ~MAC_DICTIONARY_FILE~ to the absolute
+  path to the ~Body.data~ file, or
+- At the top of ~macDict.sh~, edit the default path to the
+  ~Body.data~ file in the ~body_data~ variable.
+
+The path must be absolute, not relative, because the
+~DefaultStyle.css~ from the same directory as the ~Body.data~ will be
+referenced in the generated html.
+
+Run the wrapper script, not the ~macDict~ binary directly.
+
+This opens the GUI:
+
+#+begin_src bash
+  ./macDict.sh
+#+end_src
+
+On the first run, an index will be built and cached under
+~$HOME/.cache/macDict/~. Subsequent runs will read the index and start
+faster.
+
+To run without the GUI, and generate an html file for the definition
+of a word:
+
+#+begin_src bash
+  ./macDict.sh -o /tmp/out.html callipygian
+#+end_src
+
+To list words for which the given string is a prefix:
+
+#+begin_src bash
+  ./macDict.sh -l calli
+#+end_src
+
+Use -h to print help.
+
+* Key bindings
+
+For the whole window:
+
+| Ctrl-q              | Close the window     |
+| Ctrl-w              | Close the window     |
+
+For the text field:
+
+| Esc           | Clear the text field |
+| Alt-backspace | Clear the text field |
+| Ctrl-f        | Forward character    |
+| Ctrl-b        | Backward character   |
+| Alt-f         | Forward word         |
+| Alt-b         | Backward word        |
