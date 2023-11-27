@@ -7,6 +7,10 @@ phrases, extra formatting, a smaller cached index, and Qt UI on Linux.
 Tested on macOS Big Sur and Ubuntu 22.04 LTS, with the /Oxford
 Dictionary of English/ and /New Oxford American Dictionary/.
 
+* Screenshot
+
+[[file:example.png]]
+
 * Dependencies
 
 - C++11 compiler (clang on macOS, gcc on Linux)
