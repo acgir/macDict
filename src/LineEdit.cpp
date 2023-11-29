@@ -11,9 +11,7 @@ void LineEdit::keyPressEvent(QKeyEvent *event) {
 	const bool ctrl = (event->modifiers() & Qt::ControlModifier);
 	const bool alt  = (event->modifiers() & Qt::AltModifier);
 
-	if (	event->key() == Qt::Key_Escape ||
-		(event->key() == Qt::Key_Backspace && alt)
-	){
+	if (event->key() == Qt::Key_Backspace && alt) {
 		clear();
 
 	} else if (event->key() == Qt::Key_F && ctrl) {

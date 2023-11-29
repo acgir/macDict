@@ -129,6 +129,9 @@ void Window::keyPressEvent(QKeyEvent *event) {
 	) {
 		close();
 
+	} else if (event->key() == Qt::Key_Escape) {
+		close();
+
 	} else {
 		QMainWindow::keyPressEvent(event);
 	}

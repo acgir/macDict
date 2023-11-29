@@ -105,12 +105,12 @@ Use -h to print help.
 
 For the whole window:
 
-| Ctrl-q              | Close the window     |
-| Ctrl-w              | Close the window     |
+| Ctrl-q | Close the window |
+| Ctrl-w | Close the window |
+| Esc    | Close the window |
 
 For the text field:
 
-| Esc           | Clear the text field |
 | Alt-backspace | Clear the text field |
 | Ctrl-f        | Forward character    |
 | Ctrl-b        | Backward character   |
