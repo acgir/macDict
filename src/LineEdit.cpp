@@ -1,7 +1,8 @@
 #include "LineEdit.h"
 #include <QKeyEvent>
 
-LineEdit::LineEdit(QWidget *parent) : QLineEdit(parent) {}
+LineEdit::LineEdit(const std::string &text, QWidget *parent)
+	: QLineEdit(QString::fromUtf8(text.c_str()), parent) {}
 
 LineEdit::~LineEdit() {}
 

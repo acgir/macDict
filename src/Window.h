@@ -17,7 +17,10 @@ struct DictionaryRef;
 class Window : public QMainWindow {
 Q_OBJECT
 public:
-	Window(const DictionaryRef &dict, const bool dark, QWidget *parent = NULL);
+	Window(const DictionaryRef &dict,
+	       const bool dark,
+	       const std::string &word,
+	       QWidget *parent = NULL);
 	virtual ~Window();
 
 protected:

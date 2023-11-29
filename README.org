@@ -80,6 +80,12 @@ On the first run, an index will be built and cached under
 ~$HOME/.cache/macDict/~. Subsequent runs will read the index and start
 faster.
 
+Optionally pass the word to lookup as an argument:
+
+#+begin_src bash
+  ./macDict.sh callipygian
+#+end_src
+
 To run without the GUI, and generate an html file for the definition
 of a word:
 

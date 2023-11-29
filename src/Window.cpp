@@ -22,17 +22,21 @@ static QPushButton *add_flat_btn(
 	return btn;
 }
 
-Window::Window(const DictionaryRef &dict, const bool dark, QWidget *parent) :
-	QMainWindow(parent),
-	_dict(dict),
-	_dark(dark)
+Window::Window(
+	const DictionaryRef &dict,
+	const bool dark,
+	const std::string &word,
+	QWidget *parent
+) : QMainWindow(parent),
+    _dict(dict),
+    _dark(dark)
 {
 	setWindowTitle("Dictionary");
 
 	_left   = new QWidget(this);
 	_right	= new QWidget(this);
 	_top	= new QWidget(_right);
-	_line	= new LineEdit(_top);
+	_line	= new LineEdit(word, _top);
 	_scroll = new QScrollArea(_right);
 
 	_view	= new QWebEngineView(_scroll);

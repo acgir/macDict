@@ -885,16 +885,16 @@ void list_words(
 }
 
 static void usage(const char * const bin) {
-	cerr << bin << " [-h] -d /path/to/Body.data [-i index] [-D] [-c] [<-l | -o out.html> word]\n";
+	cerr << bin << " [-h] -d /path/to/Body.data [-i index] [-D] [-c] [[-l | -o out.html] word]\n";
 	cerr << "\n";
 	cerr << "-h    Print help.\n";
 	cerr << "-d    Absolute path to Body.data file. The DefaultStyle.css in the same directory will also be read.\n";
 	cerr << "-i    Index cache file to write (if it doesn't exist), otherwise read. Recommended for speed.\n";
 	cerr << "-D    Dark mode.\n";
 	cerr << "-c    Centre the window on the screen.\n";
-	cerr << "-l    List words for which 'word' is a prefix. Prints to stdout.\n";
-	cerr << "-o    Output html file containing the definition of 'word'.\n";
-	cerr << "word  Word to lookup, instead of starting the GUI.\n";
+	cerr << "-l    List words to stdout for which 'word' is a prefix, instead of starting GUI.\n";
+	cerr << "-o    Output html file containing the definition of 'word', instead of starting GUI.\n";
+	cerr << "word  Word to lookup.\n";
 }
 
 int main(int argc, char *argv[]) {
@@ -1050,12 +1050,41 @@ int main(int argc, char *argv[]) {
 	const DictionaryRef dict(infile, fn, index, links, backlinks);
 	int res = 0;
 
-	if (target.empty()) {
+	do {
+		if (!target.empty()) {
+
+			if (list) {
+				// list entries for which target (downcased) is a prefix
+
+				unsigned int num_found = 0U;
+
+				list_words(dict, target,
+					[](const std::string &word, void *data) {
+						unsigned int &num_found = *((unsigned int*)data);
+						cout << word << "\n";
+						++num_found;
+					}, &num_found);
+
+				cerr << num_found << " found\n";
+				break;
+
+			} else if (!out_fn.empty()) {
+
+				std::ofstream outfile(out_fn.c_str(), std::ios::out|std::ios::trunc);
+				if (!outfile.is_open()) {
+					cerr << argv[0] << " : failed to create output file " << out_fn << "\n";
+					return 1;
+				}
+
+				res = output_definition(dict, target, false, dark, outfile, cerr);
+				break;
+			}
+		}
 
 #ifdef WANT_GUI
 		QApplication app(argc, argv);
 
-		Window * const w = new Window(dict, dark);
+		Window * const w = new Window(dict, dark, target);
 		w->resize(850, 600);
 
 		if (centre) {
@@ -1074,33 +1103,7 @@ int main(int argc, char *argv[]) {
 		return app.exec();
 #endif
 
-	} else {
-
-		if (list) {
-			// list entries for which target (downcased) is a prefix
-
-			unsigned int num_found = 0U;
-
-			list_words(dict, target,
-				   [](const std::string &word, void *data) {
-					   unsigned int &num_found = *((unsigned int*)data);
-					   cout << word << "\n";
-					   ++num_found;
-				   }, &num_found);
-
-			cerr << num_found << " found\n";
-
-		} else if (!out_fn.empty()) {
-
-			std::ofstream outfile(out_fn.c_str(), std::ios::out|std::ios::trunc);
-			if (!outfile.is_open()) {
-				cerr << argv[0] << " : failed to create output file " << out_fn << "\n";
-				return 1;
-			}
-
-			res = output_definition(dict, target, false, dark, outfile, cerr);
-		}
-	}
+	} while (0);
 
 
 	xmlCleanupParser();

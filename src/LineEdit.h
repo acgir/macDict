@@ -6,7 +6,7 @@
 class LineEdit : public QLineEdit {
 Q_OBJECT
 public:
-	explicit LineEdit(QWidget *parent);
+	LineEdit(const std::string &text, QWidget *parent);
 	virtual ~LineEdit();
 
 protected:
