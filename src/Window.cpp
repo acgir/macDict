@@ -33,11 +33,11 @@ Window::Window(
 {
 	setWindowTitle("Dictionary");
 
-	_left   = new QWidget(this);
-	_right	= new QWidget(this);
-	_top	= new QWidget(_right);
+	_cen    = new QWidget(this);
+	_top	= new QWidget(_cen);
+	_split  = new QSplitter(Qt::Horizontal, _cen);
 	_line	= new LineEdit(word, _top);
-	_scroll = new QScrollArea(_right);
+	_scroll = new QScrollArea(_split);
 
 	_view	= new QWebEngineView(_scroll);
 	_view->setZoomFactor(1.25);
@@ -56,7 +56,7 @@ Window::Window(
 	connect(_small, &QPushButton::clicked, this, &Window::slot_text_small);
 	connect(_big,   &QPushButton::clicked, this, &Window::slot_text_big);
 
-	_list = new QListWidget(_left);
+	_list = new QListWidget(_split);
 	_list->setFrameStyle(QFrame::NoFrame);
 	connect(_list, &QListWidget::currentItemChanged, this, &Window::slot_item_changed);
 
@@ -68,45 +68,38 @@ Window::Window(
 	_scroll->setWidget(_view);
 
 	{
-		QVBoxLayout * const layout = new QVBoxLayout(_left);
-		layout->setContentsMargins(0,5,0,0);
-		layout->addSpacing(10);
-		layout->addWidget(_found, 0, Qt::AlignCenter);
-		layout->addSpacing(15);
-		layout->addWidget(_list, 1);
-	}
-
-	{
-		QVBoxLayout * const layout = new QVBoxLayout(_right);
-		layout->setContentsMargins(0,0,0,0);
-		// layout->setSpacing(10);
-		layout->addWidget(_top, 0);
-		layout->addWidget(_scroll, 1);
-	}
-
-	{
 		QHBoxLayout * const layout = new QHBoxLayout(_top);
-		layout->setSpacing(5);
+		layout->addSpacing(10);
+		layout->addWidget(_theme, 0);
 		// layout->addWidget(_back, 0);
 		// layout->addWidget(_fwd, 0);
 		layout->addStretch(1);
+		layout->addSpacing(20);
+		layout->addWidget(_found, 0);
+		layout->addStretch(3);
 		layout->addWidget(_small, 0);
 		layout->addWidget(_big, 0);
-		layout->addWidget(_theme, 0);
-		layout->addSpacing(20);
-		layout->addWidget(_line, 2);
+		layout->addSpacing(10);
+		layout->addWidget(_line, 6);
 
 		_line->setSizePolicy(QSizePolicy::Preferred,
 				     QSizePolicy::Preferred);
 	}
 
-	_split = new QSplitter(Qt::Horizontal, this);
-	_split->addWidget(_left);
-	_split->addWidget(_right);
+	_split->addWidget(_list);
+	_split->addWidget(_scroll);
 	_split->setStretchFactor(0, 1);
 	_split->setStretchFactor(1, 1);
+	_split->setHandleWidth(1);
 
-	setCentralWidget(_split);
+	{
+		QVBoxLayout * const layout = new QVBoxLayout(_cen);
+		layout->setContentsMargins(0,0,0,0);
+		layout->addWidget(_top, 0, Qt::AlignTop);
+		layout->addWidget(_split, 1);
+	}
+
+	setCentralWidget(_cen);
 
 	_line->setFocus();
 
@@ -290,6 +283,8 @@ void Window::slot_toggle_theme(bool) {
 
 void Window::update_list_theme() {
 	std::ostringstream css;
-	output_color_css(_dark, css);
+	css <<
+		"  color: " << (_dark ? "white" : "black") << ";\n"
+		"  background-color: " << (_dark ? "#2d2d2d" : "white") << ";\n";
 	_list->setStyleSheet(css.str().c_str());
 }

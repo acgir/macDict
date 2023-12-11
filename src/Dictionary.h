@@ -3,7 +3,6 @@
 
 struct DictionaryRef;
 
-void output_color_css(const bool dark, std::ostream &out);
 void output_body_css(const bool dark, std::ostream &out);
 
 /// Trim whitespace at the left and right
