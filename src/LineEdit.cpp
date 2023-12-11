@@ -14,6 +14,9 @@ void LineEdit::keyPressEvent(QKeyEvent *event) {
 	if (event->key() == Qt::Key_Backspace && alt) {
 		clear();
 
+	} else if (event->key() == Qt::Key_W && alt) {
+		event->ignore();
+
 	} else if (event->key() == Qt::Key_F && ctrl) {
 		cursorForward(false);
 

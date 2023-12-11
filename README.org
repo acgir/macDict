@@ -107,6 +107,7 @@ For the whole window:
 
 | Ctrl-q | Close the window |
 | Ctrl-w | Close the window |
+| Alt-w  | Close the window |
 | Esc    | Close the window |
 
 For the text field:

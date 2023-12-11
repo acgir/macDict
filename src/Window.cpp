@@ -129,6 +129,11 @@ void Window::keyPressEvent(QKeyEvent *event) {
 	) {
 		close();
 
+	} else if (event->key() == Qt::Key_W &&
+		   (event->modifiers() & Qt::AltModifier)
+	) {
+		close();
+
 	} else if (event->key() == Qt::Key_Escape) {
 		close();
 
