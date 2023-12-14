@@ -33,11 +33,13 @@ Window::Window(
 {
 	setWindowTitle("Dictionary");
 
-	_cen    = new QWidget(this);
-	_top	= new QWidget(_cen);
-	_split  = new QSplitter(Qt::Horizontal, _cen);
-	_line	= new LineEdit(word, _top);
-	_scroll = new QScrollArea(_split);
+	_split	   = new QSplitter(Qt::Horizontal, this);
+	_left	   = new QWidget(_split);
+	_right	   = new QWidget(_split);
+	_top_left  = new QWidget(_left);
+	_top_right = new QWidget(_right);
+	_line	   = new LineEdit(word, _top_right);
+	_scroll	   = new QScrollArea(_right);
 
 	_view	= new QWebEngineView(_scroll);
 	_view->setZoomFactor(1.25);
@@ -45,18 +47,18 @@ Window::Window(
 	QWebEngineProfile::defaultProfile()->setPersistentCookiesPolicy(QWebEngineProfile::NoPersistentCookies);
 
 
-	_found	= new QLabel("", _top);
-	_theme  = new QPushButton("Theme", _top);
-	// _back  = add_flat_btn("<", _top);
-	// _fwd   = add_flat_btn(">", _top);
-	_small = add_flat_btn("-", _top);
-	_big   = add_flat_btn("+", _top);
+	_theme  = new QPushButton("Theme", _top_left);
+	_found	= new QLabel("", _top_right);
+	// _back  = add_flat_btn("<", _top_right);
+	// _fwd   = add_flat_btn(">", _top_right);
+	_small = add_flat_btn("-", _top_right);
+	_big   = add_flat_btn("+", _top_right);
 
 	connect(_theme, &QPushButton::clicked, this, &Window::slot_toggle_theme);
 	connect(_small, &QPushButton::clicked, this, &Window::slot_text_small);
 	connect(_big,   &QPushButton::clicked, this, &Window::slot_text_big);
 
-	_list = new QListWidget(_split);
+	_list = new QListWidget(_left);
 	_list->setFrameStyle(QFrame::NoFrame);
 	connect(_list, &QListWidget::currentItemChanged, this, &Window::slot_item_changed);
 
@@ -68,38 +70,48 @@ Window::Window(
 	_scroll->setWidget(_view);
 
 	{
-		QHBoxLayout * const layout = new QHBoxLayout(_top);
+		QHBoxLayout * const layout = new QHBoxLayout(_top_left);
+		layout->addWidget(_theme, 0, Qt::AlignCenter);
+	}
+
+	{
+		QVBoxLayout * const layout = new QVBoxLayout(_left);
+		layout->setContentsMargins(0,0,0,0);
+		layout->setSpacing(0);
+		layout->addWidget(_top_left, 0, Qt::AlignTop);
+		layout->addWidget(_list, 1);
+		_left->setContentsMargins(10,0,10,10);
+	}
+
+	{
+		QHBoxLayout * const layout = new QHBoxLayout(_top_right);
 		layout->addSpacing(10);
-		layout->addWidget(_theme, 0);
-		// layout->addWidget(_back, 0);
-		// layout->addWidget(_fwd, 0);
-		layout->addStretch(1);
-		layout->addSpacing(20);
 		layout->addWidget(_found, 0);
 		layout->addStretch(3);
 		layout->addWidget(_small, 0);
 		layout->addWidget(_big, 0);
 		layout->addSpacing(10);
 		layout->addWidget(_line, 6);
-
 		_line->setSizePolicy(QSizePolicy::Preferred,
 				     QSizePolicy::Preferred);
 	}
 
-	_split->addWidget(_list);
-	_split->addWidget(_scroll);
+	{
+		QVBoxLayout * const layout = new QVBoxLayout(_right);
+		layout->setContentsMargins(0,0,0,0);
+		layout->setSpacing(0);
+		layout->addWidget(_top_right, 0, Qt::AlignTop);
+		layout->addWidget(_scroll, 1);
+		_top_right->setContentsMargins(5,5,5,5);
+	}
+
+	_split->addWidget(_left);
+	_split->addWidget(_right);
 	_split->setStretchFactor(0, 1);
 	_split->setStretchFactor(1, 1);
 	_split->setHandleWidth(1);
 
-	{
-		QVBoxLayout * const layout = new QVBoxLayout(_cen);
-		layout->setContentsMargins(0,0,0,0);
-		layout->addWidget(_top, 0, Qt::AlignTop);
-		layout->addWidget(_split, 1);
-	}
-
-	setCentralWidget(_cen);
+	setCentralWidget(_split);
 
 	_line->setFocus();
 
@@ -145,6 +157,8 @@ void Window::showEvent(QShowEvent *event) {
 		size[1] = sum-size[0];
 		_split->setSizes(size);
 	}
+
+	_top_left->setFixedHeight(_top_right->height());
 }
 
 void Window::begin_html(std::ostream &out) const {
@@ -283,8 +297,18 @@ void Window::slot_toggle_theme(bool) {
 
 void Window::update_list_theme() {
 	std::ostringstream css;
-	css <<
-		"  color: " << (_dark ? "white" : "black") << ";\n"
-		"  background-color: " << (_dark ? "#2d2d2d" : "white") << ";\n";
+	output_color_css(_dark ? "white"   : "black",
+			 _dark ? "#252525" : "#dddede", css);
 	_list->setStyleSheet(css.str().c_str());
+	this->setStyleSheet(css.str().c_str());
+
+	css.str("");
+	output_color_css(_dark ? "white"   : "black",
+			 _dark ? "#343434" : "#f0f1f1", css);
+	_top_right->setStyleSheet(css.str().c_str());
+
+	css.str("");
+	output_color_css(_dark ? "white"   : "black",
+			 _dark ? "#1d1d1d" : "white", css);
+	_line->setStyleSheet(css.str().c_str());
 }

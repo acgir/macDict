@@ -726,13 +726,19 @@ struct DictionaryRef {
 	const BackLinksT &_backlinks;
 };
 
+void output_color_css(const char *text, const char *background, std::ostream &out) {
+	out <<
+		"  color: " << text << ";\n"
+		"  background-color: " << background << ";\n";
+}
+
 void output_body_css(const bool dark, std::ostream &out) {
 	out <<
 		"body {\n"
-		"  font-family: Sans-Serif;\n"
-		"  color: " << (dark ? "white" : "black") << ";\n"
-		"  background-color: " << (dark ? "#1d1d1d" : "white") << ";\n"
-	"}\n";
+		"  font-family: Sans-Serif;\n";
+	output_color_css(dark ? "white"   : "black",
+			 dark ? "#1d1d1d" : "white", out);
+	out << "}\n";
 }
 
 int output_definition(

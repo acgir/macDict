@@ -43,8 +43,10 @@ private:
 	QSplitter *_split;
 	QScrollArea *_scroll;
 	QWebEngineView *_view;
-	QWidget *_cen;
-	QWidget *_top;
+	QWidget *_left;
+	QWidget *_right;
+	QWidget *_top_left;
+	QWidget *_top_right;
 	LineEdit *_line;
 	// QPushButton *_back;
 	// QPushButton *_fwd;
