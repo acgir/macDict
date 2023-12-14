@@ -11,6 +11,13 @@ Dictionary of English/ and /New Oxford American Dictionary/.
 
 [[file:example.png]]
 
+In Gnome, the dark or light theme is automatically chosen based on
+the output of:
+
+#+begin_src bash
+  gsettings get org.gnome.desktop.interface color-scheme
+#+end_src
+
 * Dependencies
 
 - C++11 compiler (clang on macOS, gcc on Linux)
