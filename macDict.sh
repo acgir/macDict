@@ -35,12 +35,19 @@ if [ ! -f "${body_data}" ]; then
     exit 1
 fi
 
-# Use the SHA1 hash of the Body.data as the filename for the cached index
-key=$(shasum -b "${body_data}" | head -n 1 | awk '{print $1}')
-if [ -z "${key}" ]; then
-    echo "macDict.sh : failed to compute shasum of ${body_data}"
+# Walk up to the .asset dir
+asset="${body_data}"
+for i in {0..4}; do
+    asset=$(dirname "${asset}")
+done
+asset=$(basename "${asset}")
+if [[ ! "${asset}" =~ [a-zA-Z0-9]+\.asset$ ]]; then
+    echo "macDict.sh : expecting Body.data path to include .asset directory"
     exit 1
 fi
+
+# Use the asset directory name as the filename for the cached index
+key="${asset}"
 
 # Where to read/write the index
 cache_dir="${HOME}/.cache/macDict"

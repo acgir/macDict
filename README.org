@@ -73,7 +73,8 @@ Then either:
 
 The path must be absolute, not relative, because the
 ~DefaultStyle.css~ from the same directory as the ~Body.data~ will be
-referenced in the generated html.
+referenced in the generated html, and the ~.asset~ directory name will
+be used as the filename for the cached index.
 
 Run the wrapper script, not the ~macDict~ binary directly.
 
