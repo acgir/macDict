@@ -101,3 +101,7 @@ test: macDict
 
 clean:
 	rm -rf macDict build
+
+# list all words to replace /usr/share/dict/words
+words: macDict
+	./macDict.sh -a | sort > ~/.cache/macDict/words
