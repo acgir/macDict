@@ -885,8 +885,25 @@ void list_words(
 	}
 }
 
+static void list_all_words(
+	const DictionaryRef &d,
+	void (*func)(const std::string &, void *data),
+	void *data
+) {
+	for (	IndexT::const_iterator
+		it=d._index.begin(); it!=d._index.end(); ++it
+	) {
+		func(it->second._name, data);
+	}
+	for (	LinksT::const_iterator
+		it=d._links.begin(); it!=d._links.end(); ++it
+	) {
+		func(it->first, data);
+	}
+}
+
 static void usage(const char * const bin) {
-	cerr << bin << " [-h] -d /path/to/Body.data [-i index] [-D] [-c] [[-l | -o out.html] word]\n";
+	cerr << bin << " [-h] -d /path/to/Body.data [-i index] [-D] [-c] [-a] [[-l | -o out.html] word]\n";
 	cerr << "\n";
 	cerr << "-h    Print help.\n";
 	cerr << "-d    Absolute path to Body.data file. The DefaultStyle.css in the same directory will also be read.\n";
@@ -894,6 +911,7 @@ static void usage(const char * const bin) {
 	cerr << "-D    Dark mode.\n";
 	cerr << "-c    Centre the window on the screen.\n";
 	cerr << "-l    List words to stdout for which 'word' is a prefix, instead of starting GUI.\n";
+	cerr << "-a    List all words to stdout, one per line, instead of starting GUI.\n";
 	cerr << "-o    Output html file containing the definition of 'word', instead of starting GUI.\n";
 	cerr << "word  Word to lookup.\n";
 }
@@ -902,13 +920,14 @@ int main(int argc, char *argv[]) {
 
 	std::string fn, index_cache, target, out_fn;
 	bool list = false;
+	bool all = false;
 	bool dark = false;
 	bool centre = false;
 
 	// command line options
 	{
 		int opt;
-		while ((opt = getopt(argc, argv, "hd:i:o:lDc")) != -1) {
+		while ((opt = getopt(argc, argv, "hd:i:o:laDc")) != -1) {
 			switch (opt) {
 			case 'h':
 				usage(argv[0]);
@@ -924,6 +943,9 @@ int main(int argc, char *argv[]) {
 				break;
 			case 'l':
 				list = true;
+				break;
+			case 'a':
+				all = true;
 				break;
 			case 'D':
 			        dark = true;
@@ -1052,6 +1074,14 @@ int main(int argc, char *argv[]) {
 	int res = 0;
 
 	do {
+		if (all) {
+			list_all_words(dict,
+				[](const std::string &word, void *data) {
+					cout << word << "\n";
+				}, NULL);
+			break;
+		}
+
 		if (!target.empty()) {
 
 			if (list) {
