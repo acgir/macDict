@@ -104,4 +104,4 @@ clean:
 
 # list all words to replace /usr/share/dict/words
 words: macDict
-	./macDict.sh -a | sort > ~/.cache/macDict/words
+	./macDict.sh -a | LC_ALL=C sort > ~/.cache/macDict/words
